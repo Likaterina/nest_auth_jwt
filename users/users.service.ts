@@ -30,6 +30,10 @@ export class UsersService {
   }
 
   async findOne(username: string): Promise<User | undefined> {
-    return await this.users.find(user => user.username === username)
+    console.log(username)
+    return await this.users.find(user => {
+      console.log(user)
+      user.username === username
+    })
   }
 }
