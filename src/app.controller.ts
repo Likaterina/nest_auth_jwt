@@ -6,19 +6,22 @@ import {
   ValidationPipe,
   Get,
   UseInterceptors,
-  ClassSerializerInterceptor
+  ClassSerializerInterceptor,
+  Param
 } from "@nestjs/common"
 import { AuthService } from "../auth/auth.service"
 import { CreateUserDto, UsersService } from "users/users.service"
 import { UserEntity } from "../users/users.service"
 
 import { ApiResponse } from "@nestjs/swagger"
-import { threadId } from "worker_threads"
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller("auth")
 export class AppController {
-  constructor(private readonly authService: AuthService,
-    private readonly usersService: UsersService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService
+  ) {}
 
   @Post("registration")
   @ApiResponse({ status: 201, description: "Ok" })
@@ -35,9 +38,17 @@ export class AppController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get("all")
-   findThis(): UserEntity {
-    return this.usersService.findThis()
+  @Get("/:id")
+  async findById(@Param("id") id: string): Promise<UserEntity> {
+    console.log("get", id)
+    return await this.usersService.findById(id)
   }
 
+  // 
+  // @Get("/:all")
+  // findAll(): UserEntity{
+  //   return new UserEntity({
+  //     _id: "1"
+  //   })
+  // }
 }

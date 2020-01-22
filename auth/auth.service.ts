@@ -1,7 +1,12 @@
-import { Injectable } from "@nestjs/common"
+import {
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException
+} from "@nestjs/common"
 import { UsersService } from "users/users.service"
 import { JwtService } from "@nestjs/jwt"
 import { User } from "users/users.service"
+import { CreateUserDto } from "users/users.service"
 
 @Injectable()
 export class AuthService {
@@ -10,27 +15,38 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  private async validate(userData: User): Promise<User> {
+  private async validate(userData: CreateUserDto): Promise<User> {
     return await this.usersService.findOne(userData.username)
   }
 
-  public async login(user: User): Promise<any | { status: number }> {
+  public async login(user: CreateUserDto): Promise<any | { status: number }> {
     return this.validate(user).then(userData => {
-      if (!userData) {
-        return { status: 404 }
-      }    
-      let payload = `${userData.username}${userData.userId}`
+      console.log(userData)
+      if (userData == null) {
+        throw new UnauthorizedException()
+      }
+      let payload = "" + userData.username + userData._id
       const accessToken = this.jwtService.sign(payload)
       return {
-        expires_in: 3600,
-        access_token: accessToken,
-        user_id: payload,
+        expiresIn: 3600,
+        accessToken: accessToken,
+        userId: payload,
         status: 200
       }
     })
   }
 
-  public async register(user: User): Promise<any> {
-    return this.usersService.create(user)
+  public async register(
+    user: CreateUserDto
+  ): Promise<any | { status: number }> {
+    return this.validate(user).then(userData => {
+      if (userData) {
+        throw new ForbiddenException()
+      } else {
+        return this.usersService.create(user)
+      }
+    })
   }
+
+  
 }

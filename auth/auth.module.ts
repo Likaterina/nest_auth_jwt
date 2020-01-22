@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common"
+import { ConfigModule } from "@nestjs/config"
 import { MongooseModule } from "@nestjs/mongoose"
 import { AuthService } from "./auth.service"
+import * as Joi from "@hapi/joi"
 import { UsersModule } from "users/users.module"
 import { JwtModule } from "@nestjs/jwt"
 import { PassportModule } from "@nestjs/passport"
@@ -14,8 +16,7 @@ import { AppController } from "../src/app.controller"
     UsersModule,
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.register({
-      secret: Salt.secret,
-      signOptions: { expiresIn: "60s" }
+      secret: Salt.secret
     })
   ],
   controllers: [AppController],
