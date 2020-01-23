@@ -7,7 +7,8 @@ import {
   Get,
   UseInterceptors,
   ClassSerializerInterceptor,
-  Param
+  Param,
+  NotFoundException
 } from "@nestjs/common"
 import { AuthService } from "../auth/auth.service"
 import { CreateUserDto, UsersService } from "users/users.service"
@@ -15,7 +16,6 @@ import { UserEntity } from "../users/users.service"
 
 import { ApiResponse } from "@nestjs/swagger"
 
-@UseInterceptors(ClassSerializerInterceptor)
 @Controller("auth")
 export class AppController {
   constructor(
@@ -41,14 +41,15 @@ export class AppController {
   @Get("/:id")
   async findById(@Param("id") id: string): Promise<UserEntity> {
     console.log("get", id)
-    return await this.usersService.findById(id)
+   const user = await this.usersService.findById(id);
+   if (user) {
+      return new UserEntity(user);
+   }
+
+   throw new NotFoundException(`User with Id '${id}' not found.`)
+
+
   }
 
-  // 
-  // @Get("/:all")
-  // findAll(): UserEntity{
-  //   return new UserEntity({
-  //     _id: "1"
-  //   })
-  // }
+  
 }

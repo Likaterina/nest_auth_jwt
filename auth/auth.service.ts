@@ -31,7 +31,7 @@ export class AuthService {
         expiresIn: 3600,
         accessToken: accessToken,
         userId: payload,
-        status: 200
+        status: 200,
       }
     })
   }
