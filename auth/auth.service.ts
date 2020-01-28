@@ -5,8 +5,8 @@ import {
 } from "@nestjs/common"
 import { UsersService } from "users/users.service"
 import { JwtService } from "@nestjs/jwt"
-import { User } from "users/users.service"
-import { CreateUserDto } from "users/users.service"
+import { User } from "users/user.interface"
+import { CreateUserDto } from "users/user.dto"
 
 @Injectable()
 export class AuthService {
@@ -39,7 +39,9 @@ export class AuthService {
   public async register(
     user: CreateUserDto
   ): Promise<any | { status: number }> {
+    console.log("user", user)
     return this.validate(user).then(userData => {
+      console.log("userData", userData)
       if (userData) {
         throw new ForbiddenException()
       } else {

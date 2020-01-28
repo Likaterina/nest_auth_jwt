@@ -1,11 +1,10 @@
 import { NestFactory } from "@nestjs/core"
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger"
-import { AppModule } from "./app.module"
 import { AuthModule } from "auth/auth.module"
 import { ValidationPipe } from "@nestjs/common"
 
 async function bootstrap() {
-  const app = await NestFactory.create(AuthModule)
+  const app = await NestFactory.create(AuthModule, { cors: true })
   app.useGlobalPipes(new ValidationPipe())
   const options = new DocumentBuilder()
     .setTitle("auth")
