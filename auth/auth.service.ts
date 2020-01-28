@@ -31,7 +31,7 @@ export class AuthService {
         expiresIn: 3600,
         accessToken: accessToken,
         userId: payload,
-        status: 200,
+        status: 200
       }
     })
   }
@@ -45,10 +45,16 @@ export class AuthService {
       if (userData) {
         throw new ForbiddenException()
       } else {
-        return this.usersService.create(user)
+        this.usersService.create(user)
+        let payload = "" + user.username + user._id
+        const accessToken = this.jwtService.sign(payload)
+        return {
+          expiresIn: 3600,
+          accessToken: accessToken,
+          userId: payload,
+          status: 200
+        }
       }
     })
   }
-
-  
 }
